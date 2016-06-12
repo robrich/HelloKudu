@@ -1,0 +1,13 @@
+﻿@{
+	ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+	<h1>Hello Kudu</h1>
+	<p>This is a demo of custom Azure Deployments with Kudu</p>
+	<p class="pull-right">git version: @ViewBag.GitHash</p>
+</div>
+
+@section scripts {
+	<script src="/js/site.js"></script>
+}
