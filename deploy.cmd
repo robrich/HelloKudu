@@ -73,6 +73,14 @@ IF /I "Hello.sln" NEQ "" (
   IF !ERRORLEVEL! NEQ 0 goto error
 )
 
+:: 4. Build SolutionDir
+call :ExecuteCmd "%MSBUILD_PATH%" "%DEPLOYMENT_SOURCE%\HelloKudu.sln" /nologo /maxcpucount /verbosity:m /property:Configuration=Release /property:ToolsVersion=12.0 %SCM_BUILD_ARGS%
+IF !ERRORLEVEL! NEQ 0 goto error
+
+:: 5. Run unit tests
+"%DEPLOYMENT_SOURCE%\packages\xunit.runner.console.2.1.0\tools\xunit.console.exe" "%DEPLOYMENT_SOURCE%\src\Web.Tests\bin\Release\HelloKudu.Web.Tests.dll"
+IF !ERRORLEVEL! NEQ 0 goto error
+
 :: 2. Build to the temporary path
 IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
   call :ExecuteCmd "%MSBUILD_PATH%" "%DEPLOYMENT_SOURCE%\src\Web\Web.csproj" /nologo /verbosity:m /t:Build /t:pipelinePreDeployCopyAllFilesToOneFolder /p:_PackageTempDir="%DEPLOYMENT_TEMP%";AutoParameterizationWebConfigConnectionStrings=false;Configuration=Release;UseSharedCompilation=false /p:SolutionDir="%DEPLOYMENT_SOURCE%\.\\" %SCM_BUILD_ARGS%
